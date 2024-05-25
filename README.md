@@ -56,7 +56,7 @@ The database contains three tables:
 1. **Clone the Repository**
 
    ```bash
-   git clone <your-repository-url>
+   git clone https://github.com/ChenTim1011/DB-Final-Project.git
    cd <your-repository-name>
    
 Install Dependencies
@@ -72,7 +72,9 @@ Ensure that you have SQLite installed and then run the create_tables() function 
         create_tables()  # Create tables
         app.run(debug=True)
 You can use SQL query to insert multiple Data
+
 For example:
+
 Use the provided insert.sql script to populate the database with initial data. Execute the script using SQLite command line tool or a database browser.
     
     sqlite3 library.db < insert.sql
@@ -82,12 +84,21 @@ Run the Flask Application
     python app.py
     
 Using the Application
+
 Open your browser and navigate to http://127.0.0.1:5000/.
+
 Use the tabs to navigate through different functionalities:
+
 Add Book: Add a new book to the library.
+
 Add Reading History: Add a new reading history record.
+
 Add Reading Plan: Add or update a reading plan.
+
 Delete Data: Delete a record from the specified table.
+
 Search by Category: Search books by category.
+
 Search by Name: Search books by name.
+
 View Data in the tables to see the records for books, reading history, and reading plans.
