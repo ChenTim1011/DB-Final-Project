@@ -57,7 +57,7 @@ The database contains three tables:
 
    ```bash
    git clone https://github.com/ChenTim1011/DB-Final-Project.git
-   cd <your-repository-name>
+   cd DB-Final-Project
    
 Install Dependencies
 
