@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>圖書管理系統</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">圖書管理系統</h1>
+        <ul class="nav nav-tabs mt-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#addBook">新增書籍</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#addHistory">新增閱讀歷史</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#addPlan">新增閱讀計劃(& 更新閱讀進度)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#deleteData">刪除資料</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#searchByCategory">按分類搜尋</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#searchByName">按名稱搜尋</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane container active" id="addBook">
+                <form id="addBookForm" class="mt-4">
+                    <div class="form-group">
+                        <label for="isbn">ISBN:</label>
+                        <input type="text" class="form-control" id="isbn">
+                    </div>
+                    <div class="form-group">
+                        <label for="book_title">書名:</label>
+                        <input type="text" class="form-control" id="book_title">
+                    </div>
+                    <div class="form-group">
+                        <label for="author">作者:</label>
+                        <input type="text" class="form-control" id="author">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">價格:</label>
+                        <input type="number" class="form-control" id="price" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">分類:</label>
+                        <input type="text" class="form-control" id="category">
+                    </div>
+                    <div class="form-group">
+                        <label for="edition">版次:</label>
+                        <input type="text" class="form-control" id="edition">
+                    </div>
+                    <div class="form-group">
+                        <label for="current_page">目前頁數:</label>
+                        <input type="number" class="form-control" id="current_page" value="0">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="checkAndAddBook()">新增書籍</button>
+                </form>
+            </div>
+            <div class="tab-pane container fade" id="addHistory">
+                <form id="addHistoryForm" class="mt-4">
+                    <div class="form-group">
+                        <label for="book_id_hist">書籍ID:</label>
+                        <input type="number" class="form-control" id="book_id_hist">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookpage">書頁:</label>
+                        <input type="number" class="form-control" id="bookpage">
+                    </div>
+                    <div class="form-group">
+                        <label for="note">註解:</label>
+                        <input type="text" class="form-control" id="note">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addHistory()">新增歷史</button>
+                </form>
+            </div>
+            <div class="tab-pane container fade" id="addPlan">
+                <form id="addPlanForm" class="mt-4">
+                    <div class="form-group">
+                        <label for="book_id_plan">書籍ID:</label>
+                        <input type="number" class="form-control" id="book_id_plan">
+                    </div>
+                    <div class="form-group">
+                        <label for="expired_date">到期日:</label>
+                        <input type="date" class="form-control" id="expired_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="is_complete">是否完成？</label>
+                        <input type="checkbox" class="form-control" id="is_complete">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addPlan()">新增計劃</button>
+                </form>
+            </div>
+            <div class="tab-pane container fade" id="deleteData">
+                <form id="deleteDataForm" class="mt-4">
+                    <div class="form-group">
+                        <label for="delete_table">選擇資料表:</label>
+                        <select class="form-control" id="delete_table">
+                            <option value="書籍">書籍</option>
+                            <option value="閱讀歷史">閱讀歷史</option>
+                            <option value="閱讀計劃">閱讀計劃</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="delete_id">要刪除的ID:</label>
+                        <input type="number" class="form-control" id="delete_id">
+                    </div>
+                    <button type="button" class="btn btn-danger" onclick="deleteData()">刪除資料</button>
+                </form>
+            </div>
+            <div class="tab-pane container fade" id="searchByCategory">
+                <form id="searchByCategoryForm" class="mt-4">
+                    <div class="form-group">
+                        <label for="search_category">分類:</label>
+                        <select class="form-control" id="search_category"></select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="searchByCategory()">搜尋</button>
+                </form>
+            </div>
+            <div class="tab-pane container fade" id="searchByName">
+                <form id="searchByNameForm" class="mt-4">
+                    <div class="form-group">
+                        <label for="search_name">書名:</label>
+                        <input type="text" class="form-control" id="search_name">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="searchByName()">搜尋</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#books_table">書籍</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#history_table">閱讀歷史</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#plan_table">閱讀計劃</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#search_results">搜尋結果</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane container active" id="books_table">
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>book_id</th>
+                                <th>ISBN</th>
+                                <th>book_title</th>
+                                <th>author</th>
+                                <th>price</th>
+                                <th>category</th>
+                                <th>edition</th>
+                                <th>current_page</th>
+                            </tr>
+                        </thead>
+                        <tbody id="books_table_body">
+                            <!-- 動態填充數據 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane container fade" id="history_table">
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>record_No</th>
+                                <th>time_stamp</th>
+                                <th>book_id</th>
+                                <th>bookpage</th>
+                                <th>note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history_table_body">
+                            <!-- 動態填充數據 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane container fade" id="plan_table">
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>plan_No</th>
+                                <th>book_id</th>
+                                <th>expired_date</th>
+                                <th>is_complete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan_table_body">
+                            <!-- 動態填充數據 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane container fade" id="search_results">
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>book_id</th>
+                                <th>ISBN</th>
+                                <th>book_title</th>
+                                <th>author</th>
+                                <th>price</th>
+                                <th>category</th>
+                                <th>edition</th>
+                                <th>current_page</th>
+                            </tr>
+                        </thead>
+                        <tbody id="search_results_body">
+                            <!-- 動態填充數據 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fetch all books data
+        async function fetchData() {
+            const response = await fetch('/view_data/books');
+            const data = await response.json();
+            const booksTableBody = document.getElementById('books_table_body');
+            booksTableBody.innerHTML = '';
+            data.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.ISBN}</td>
+                    <td>${book.book_title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.price}</td>
+                    <td>${book.category}</td>
+                    <td>${book.edition}</td>
+                    <td>${book.current_page}</td>
+                `;
+                booksTableBody.appendChild(row);
+            });
+        }
+
+        // Fetch all reading history data
+        async function fetchHistoryData() {
+            const response = await fetch('/view_data/history');
+            const data = await response.json();
+            const historyTableBody = document.getElementById('history_table_body');
+            historyTableBody.innerHTML = '';
+            data.forEach(history => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${history.id}</td>
+                    <td>${history.time_stamp}</td>
+                    <td>${history.book_id}</td>
+                    <td>${history.bookpage}</td>
+                    <td>${history.note}</td>
+                `;
+                historyTableBody.appendChild(row);
+            });
+        }
+
+        // Fetch all reading plan data
+        async function fetchPlanData() {
+            const response = await fetch('/view_data/plan');
+            const data = await response.json();
+            const planTableBody = document.getElementById('plan_table_body');
+            planTableBody.innerHTML = '';
+            data.forEach(plan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${plan.id}</td>
+                    <td>${plan.book_id}</td>
+                    <td>${plan.expired_date}</td>
+                    <td>${plan.is_complete}</td>
+                `;
+                planTableBody.appendChild(row);
+            });
+        }
+
+        // Check for existing book before adding
+        async function checkAndAddBook() {
+            const data = {
+                ISBN: document.getElementById('isbn').value,
+                book_title: document.getElementById('book_title').value,
+                author: document.getElementById('author').value,
+                price: document.getElementById('price').value,
+                category: document.getElementById('category').value,
+                edition: document.getElementById('edition').value,
+                current_page: document.getElementById('current_page').value
+            };
+            
+            // Check if a book with the same title already exists
+            const checkResponse = await fetch('/check_book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const checkResult = await checkResponse.json();
+            if (checkResult.existing) {
+                if (!confirm(checkResult.message)) {
+                    return;
+                }
+            }
+
+            // Add the book
+            const addResponse = await fetch('/add_book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const addResult = await addResponse.json();
+            alert(addResult.message);
+            fetchData();  // Refresh the book table after adding a book
+        }
+
+        // Add a new reading history record
+        async function addHistory() {
+            const data = {
+                book_id: document.getElementById('book_id_hist').value,
+                bookpage: document.getElementById('bookpage').value,
+                note: document.getElementById('note').value
+            };
+            const response = await fetch('/add_history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchHistoryData();  // Refresh the reading history table after adding a record
+            document.querySelector('a[href="#history_table"]').click(); // Switch to the reading history tab
+        }
+
+        // Add or update a reading plan
+        async function addPlan() {
+            const data = {
+                book_id: document.getElementById('book_id_plan').value,
+                expired_date: document.getElementById('expired_date').value,
+                is_complete: document.getElementById('is_complete').checked
+            };
+            const response = await fetch('/add_plan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchPlanData();  // Refresh the reading plan table after adding or updating a plan
+            document.querySelector('a[href="#plan_table"]').click(); // Switch to the reading plan tab
+        }
+
+        // Delete a record from the specified table
+        async function deleteData() {
+            const data = {
+                table: document.getElementById('delete_table').value,
+                id: document.getElementById('delete_id').value
+            };
+            const response = await fetch('/delete_data', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+
+            if (result.message.includes("不存在")) {
+                return;  // If the deletion ID does not exist, do not refresh the table
+            }
+
+            // Refresh the corresponding table based on the table type
+            if (data.table === '書籍') {
+                fetchData();
+                document.querySelector('a[href="#books_table"]').click(); // Switch to the books tab
+            } else if (data.table === '閱讀歷史') {
+                fetchHistoryData();
+                document.querySelector('a[href="#history_table"]').click(); // Switch to the reading history tab
+            } else if (data.table === '閱讀計劃') {
+                fetchPlanData();
+                document.querySelector('a[href="#plan_table"]').click(); // Switch to the reading plan tab
+            }
+        }
+
+        // Search books by category
+        async function searchByCategory() {
+            const category = document.getElementById('search_category').value;
+            const response = await fetch(`/search_by_category?category=${category}`);
+            const data = await response.json();
+            const resultsBody = document.getElementById('search_results_body');
+            resultsBody.innerHTML = '';
+            data.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.ISBN}</td>
+                    <td>${book.book_title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.price}</td>
+                    <td>${book.category}</td>
+                    <td>${book.edition}</td>
+                    <td>${book.current_page}</td>
+                `;
+                resultsBody.appendChild(row);
+            });
+
+            // Automatically switch to the search results tab
+            document.querySelector('a[href="#search_results"]').click();
+        }
+
+        // Search books by name
+        async function searchByName() {
+            const name = document.getElementById('search_name').value;
+            const response = await fetch(`/search_by_name?name=${name}`);
+            const data = await response.json();
+            const resultsBody = document.getElementById('search_results_body');
+            resultsBody.innerHTML = '';
+            data.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.ISBN}</td>
+                    <td>${book.book_title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.price}</td>
+                    <td>${book.category}</td>
+                    <td>${book.edition}</td>
+                    <td>${book.current_page}</td>
+                `;
+                resultsBody.appendChild(row);
+            });
+
+            // Automatically switch to the search results tab
+            document.querySelector('a[href="#search_results"]').click();
+        }
+
+        // Fetch unique categories for the dropdown
+        async function fetchCategories() {
+            const response = await fetch('/view_data/books');
+            const data = await response.json();
+            const categorySet = new Set(data.map(book => book.category));
+            const categoryDropdown = document.getElementById('search_category');
+            categorySet.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryDropdown.appendChild(option);
+            });
+        }
+
+        // Fetch initial data
+        fetchData();
+        fetchHistoryData();
+        fetchPlanData();
+        fetchCategories();
+    </script>
+</body>
+</html>
