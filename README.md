@@ -105,7 +105,7 @@ The database contains the following tables:
    
 2. **Install Dependencies**
 
-    pip install Flask
+        pip install Flask
 
 3. **Run the application**
 Make sure enter the right directory.
