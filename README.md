@@ -103,18 +103,27 @@ The database contains the following tables:
    git clone https://github.com/ChenTim1011/DB-Final-Project.git
    cd DB-Final-Project
    
-Install Dependencies
+2. **Install Dependencies**
 
     pip install Flask
 
-Create and Initialize the Database
+3. **Run the application**
+Make sure enter the right directory.
+Run the application using the appropriate command for your environment
 
-Ensure that you have SQLite installed and then run the create_tables() function to create the necessary tables in the database. You can do this by running the Flask application which includes the create_tables() call.
+For Unix-based systems (Linux, macOS):
+
+    python3 app.py
+
+For Windows:
+
+    python app.py
 
 
-    if __name__ == '__main__':
-        create_tables()  # Create tables
-        app.run(debug=True)
+Open your browser and navigate to http://127.0.0.1:5000
+
+
+
 You can use SQL query to insert multiple Data
 
 For example:
@@ -129,7 +138,7 @@ Run the Flask Application
     
 Using the Application
 
-Open your browser and navigate to http://127.0.0.1:5000/.
+Open your browser and navigate to http://127.0.0.1:5000
 
 Use the tabs to navigate through different functionalities:
 
