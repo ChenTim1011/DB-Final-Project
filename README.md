@@ -4,44 +4,88 @@
 
 This project is a Library Management System built with Flask for the backend and SQLite for the database. The system allows users to manage books, reading history, and reading plans. It also provides features to search books by category and name. The frontend is developed using HTML, Bootstrap, and JavaScript.
 
-## Database Schema
+## **Database Schema**
 
-The database contains three tables:
+The database contains the following tables:
 
-1. **Book**
-    - `id`: Integer, Primary Key
-    - `ISBN`: Text, Not Null
-    - `book_title`: Text, Not Null
-    - `author`: Text, Not Null
-    - `price`: Integer, Not Null
-    - `category`: Text, Not Null
-    - `edition`: Text, Not Null
-    - `current_page`: Integer, Not Null
+### **Book**
 
-2. **ReadingHistory**
-    - `id`: Integer, Primary Key
-    - `time_stamp`: Text, Not Null
-    - `book_id`: Integer, Foreign Key (references `Book(id)`), Not Null
-    - `bookpage`: Integer, Not Null
-    - `note`: Text, Not Null
+- **`id`**: Integer, Primary Key
+- **`ISBN`**: Text, Not Null
+- **`book_title`**: Text, Not Null
+- **`author`**: Text, Not Null
+- **`price`**: Integer, Not Null
+- **`category`**: Text, Not Null
+- **`edition`**: Text, Not Null
+- **`current_page`**: Integer, Not Null
 
-3. **ReadingPlan**
-    - `id`: Integer, Primary Key
-    - `book_id`: Integer, Foreign Key (references `Book(id)`), Not Null
-    - `expired_date`: Text, Not Null
-    - `is_complete`: Integer, Not Null
+### **ReadingHistory**
 
-## Backend Features
+- **`id`**: Integer, Primary Key
+- **`time_stamp`**: Text, Not Null
+- **`book_id`**: Integer, Foreign Key (references Book(id)), Not Null
+- **`bookpage`**: Integer, Not Null
+- **`note`**: Text, Not Null
+
+### **ReadingPlan**
+
+- **`id`**: Integer, Primary Key
+- **`book_id`**: Integer, Foreign Key (references Book(id)), Not Null
+- **`expired_date`**: Text, Not Null
+- **`is_complete`**: Integer, Not Null
+
+### **Note**
+
+- **`id`**: Integer, Primary Key
+- **`book_id`**: Integer, Foreign Key (references Book(id)), Not Null
+- **`title`**: Text, Not Null
+- **`content`**: Text, Not Null
+- **`created_at`**: Text, Not Null
+- **`updated_at`**: Text, Not Null
+
+### **FavoriteList**
+
+- **`id`**: Integer, Primary Key
+- **`book_id`**: Integer, Foreign Key (references Book(id)), Not Null
+- **`book_title`**: Text, Not Null
+
+## **Backend Features**
+
+### **Book Management**
 
 - **Check Book**: Check if a book with the same title already exists.
 - **Add Book**: Add a new book to the library. If a book with the same title exists, the user will be prompted to confirm adding a duplicate.
-- **Add Reading History**: Add a new reading history record.
-- **Add or Update Reading Plan**: Add a new reading plan or update an existing one for a book.
 - **Update Current Page**: Update the current page of a book.
-- **Delete Data**: Delete records from the specified table (Book, ReadingHistory, or ReadingPlan).
+
+### **Reading History**
+
+- **Add Reading History**: Add a new reading history record.
+
+### **Reading Plan**
+
+- **Add or Update Reading Plan**: Add a new reading plan or update an existing one for a book.
+
+### **Notes Management**
+
+- **Add Note**: Add a new note for a book.
+- **Update Note**: Update an existing note.
+- **Delete Note**: Delete a note.
+
+### **Favorites Management**
+
+- **Add Favorite**: Add a book to the favorite list.
+- **Delete Favorite**: Remove a book from the favorite list.
+
+### **Search and View Data**
+
 - **Search by Category**: Search books by category.
 - **Search by Name**: Search books by name.
 - **View Data**: View data from the specified table.
+- **View Favorites**: View the list of favorite books.
+
+### **Delete Data**
+
+- **Delete Data**: Delete records from the specified table (Book, ReadingHistory, or ReadingPlan).
 
 ## Running the Project
 
