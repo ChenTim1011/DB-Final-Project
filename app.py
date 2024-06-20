@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 import sqlite3
 from datetime import datetime
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -21,7 +22,9 @@ def create_tables():
             price INTEGER NOT NULL,
             category TEXT NOT NULL,
             edition TEXT NOT NULL,
-            current_page INTEGER NOT NULL
+            current_page INTEGER NOT NULL,
+            pdf_path TEXT  -- 新增欄位來儲存PDF檔案的路徑
+
         )
     ''')
     cursor.execute('''
@@ -66,6 +69,18 @@ def create_tables():
     conn.commit()
     conn.close()
 
+def update_database_schema():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    #Check if the pdf_path column exists in the Book table.
+    cursor.execute("PRAGMA table_info(Book)")
+    columns = [column[1] for column in cursor.fetchall()]
+    if 'pdf_path' not in columns:
+        cursor.execute("ALTER TABLE Book ADD COLUMN pdf_path TEXT")
+    conn.commit()
+    conn.close()
+
+    
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -143,6 +158,50 @@ def add_plan():
         conn.commit()
         conn.close()
         return jsonify({"message": "閱讀計劃新增成功！"}), 201
+
+UPLOAD_FOLDER = 'uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+@app.route('/upload_pdf', methods=['POST'])
+def upload_pdf():
+    book_id = request.form['book_id']
+    if 'file' not in request.files:
+        return jsonify({"message": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"message": "No selected file"}), 400
+    if file:
+        filename = f"book_{book_id}.pdf"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        # 更新資料庫中的pdf_path欄位
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE Book SET pdf_path = ? WHERE id = ?", (pdf_path, book_id))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "File successfully uploaded"}), 201
+
+
+@app.route('/view_pdf/<int:book_id>', methods=['GET'])
+def view_pdf(book_id):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT pdf_path FROM Book WHERE id = ?", (book_id,))
+    pdf_path = cursor.fetchone()[0]
+    conn.close()
+    if pdf_path:
+        return send_from_directory(directory=os.path.dirname(pdf_path), path=os.path.basename(pdf_path), as_attachment=False)
+    else:
+        return jsonify({"message": "PDF not found"}), 404
+
+
+
 
 @app.route('/update_page', methods=['PUT'])
 def update_page():
@@ -365,4 +424,5 @@ def update_note():
 
 if __name__ == '__main__':
     create_tables()
+    update_database_schema()
     app.run(debug=True)

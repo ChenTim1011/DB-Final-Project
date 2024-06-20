@@ -262,6 +262,8 @@
                     <td>
                         <button class="btn btn-secondary" onclick="addToFavorites(${book.id}, '${book.book_title}')">加到最愛</button>
                         <button class="btn btn-primary" onclick="openNotes(${book.id})">筆記</button>
+                        <button class="btn btn-info" onclick="openUploadPDFModal(${book.id})">上傳PDF</button>
+                        <button class="btn btn-success" onclick="viewPDF(${book.id})">閱讀PDF</button>
                     </td>
                 `;
                 booksTableBody.appendChild(row);
@@ -403,6 +405,55 @@
             fetchPlanData();
             document.querySelector('a[href="#plan_table"]').click();
         }
+
+
+        // Upload a PDF file for a book
+        async function openUploadPDFModal(book_id) {
+            const uploadModal = `
+                <div class="modal" id="uploadPDFModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">上傳PDF</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="uploadPDFForm">
+                                    <div class="form-group">
+                                        <input type="file" class="form-control" id="pdfFile">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="uploadPDF(${book_id})">上傳</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', uploadModal);
+            $('#uploadPDFModal').modal('show');
+        }
+
+        async function uploadPDF(book_id) {
+            const fileInput = document.getElementById('pdfFile');
+            const formData = new FormData();
+            formData.append('book_id', book_id);
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload_pdf', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            $('#uploadPDFModal').modal('hide');
+            document.getElementById('uploadPDFModal').remove();
+        }
+
+        // View the PDF file for a book
+        function viewPDF(book_id) {
+            window.open(`/view_pdf/${book_id}`, '_blank');
+        }
+
 
         // Delete a record from the specified table
         async function deleteData() {
