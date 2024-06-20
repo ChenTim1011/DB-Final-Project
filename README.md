@@ -18,6 +18,7 @@ The database contains the following tables:
 - **`category`**: Text, Not Null
 - **`edition`**: Text, Not Null
 - **`current_page`**: Integer, Not Null
+- **`pdf_path`**: Text, Nullable (New column for storing the path to the uploaded PDF file)
 
 ### **ReadingHistory**
 
@@ -56,6 +57,10 @@ The database contains the following tables:
 - **Check Book**: Check if a book with the same title already exists.
 - **Add Book**: Add a new book to the library. If a book with the same title exists, the user will be prompted to confirm adding a duplicate.
 - **Update Current Page**: Update the current page of a book.
+
+- **Upload PDF**: Upload a PDF file associated with a book. The file path is stored in the pdf_path column. (New Feature)
+
+- **View PDF**: View the uploaded PDF file of a book. (New Feature)
 
 ### **Reading History**
 
