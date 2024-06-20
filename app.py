@@ -10,6 +10,8 @@ DATABASE = 'library.db'
 def create_tables():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
+    #SQLite 需要手動啟用外鍵約束，可以在連接資料庫時啟用。
+    cursor.execute("PRAGMA foreign_keys = ON")
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Book (
             id INTEGER PRIMARY KEY,
@@ -49,7 +51,7 @@ def create_tables():
             content TEXT NOT NULL,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
-            FOREIGN KEY(book_id) REFERENCES Book(id)
+            FOREIGN KEY(book_id) REFERENCES Book(id) ON DELETE CASCADE
         )
     ''')
 
@@ -161,6 +163,8 @@ def delete_data():
         cursor.execute("SELECT * FROM Book WHERE id = ?", (data['id'],))
         item = cursor.fetchone()
         if item:
+            # 刪除相關的筆記
+            cursor.execute("DELETE FROM Note WHERE book_id = ?", (data['id'],))
             cursor.execute("DELETE FROM Book WHERE id = ?", (data['id'],))
         else:
             conn.close()
