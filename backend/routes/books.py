@@ -32,15 +32,17 @@ def add_book():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Book WHERE book_title = ?", (book_title,))
     existing_book = cursor.fetchone()
-
+    original_title = book_title
+    count = 1
     if existing_book:
-        if '(' in book_title:
-            count = int(book_title.split('(')[1].split(')')[0]) + 1
-            new_book_title = f"{book_title.split('(')[0]}({count})"
-        else:
-            new_book_title = f"{book_title}(1)"
-    else:
-        new_book_title = book_title
+        while existing_book:
+            book_title = f"{original_title}({count})"
+            cursor.execute("SELECT * FROM Book WHERE book_title = ?", (book_title,))
+            existing_book = cursor.fetchone()
+            count += 1
+
+    new_book_title = book_title
+
 
     cursor.execute("INSERT INTO Book (ISBN, book_title, author, price, category, edition, current_page) VALUES (?, ?, ?, ?, ?, ?, ?)",
                    (data['ISBN'], new_book_title, data['author'], data['price'], data['category'], data['edition'], data['current_page']))
