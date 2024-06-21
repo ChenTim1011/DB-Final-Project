@@ -8,12 +8,12 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Book (
             id INTEGER PRIMARY KEY,
-            ISBN TEXT NOT NULL,
+            ISBN INTEGER NOT NULL,
             book_title TEXT NOT NULL,
             author TEXT NOT NULL,
             price INTEGER NOT NULL,
             category TEXT NOT NULL,
-            edition TEXT NOT NULL,
+            edition INTEGER NOT NULL,
             current_page INTEGER NOT NULL,
             pdf_path TEXT  -- 新增欄位來儲存PDF檔案的路徑
         )
