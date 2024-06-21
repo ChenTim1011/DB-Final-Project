@@ -15,3 +15,12 @@ def add_history():
     conn.commit()
     conn.close()
     return jsonify({"message": "閱讀歷史新增成功！"}), 201
+
+@history_bp.route('/delete_history/<int:history_id>', methods=['DELETE'])
+def delete_history(history_id):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM ReadingHistory WHERE id = ?", (history_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "閱讀歷史刪除成功！"}), 200

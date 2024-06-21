@@ -100,3 +100,29 @@ def view_pdf(book_id):
         return send_from_directory(directory=os.path.dirname(pdf_path), path=os.path.basename(pdf_path), as_attachment=False)
     else:
         return jsonify({"message": "PDF not found"}), 404
+    
+@books_bp.route('/delete_book/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    """
+    Delete a book from the database.
+    """
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    
+    # 查找書籍的PDF文件路徑
+    cursor.execute("SELECT pdf_path FROM Book WHERE id = ?", (book_id,))
+    pdf_path = cursor.fetchone()
+    
+    # 刪除書籍的記錄
+    cursor.execute("DELETE FROM Book WHERE id = ?", (book_id,))
+    conn.commit()
+    conn.close()
+    
+    # 刪除PDF文件
+    if pdf_path:
+        try:
+            os.remove(pdf_path[0])
+        except FileNotFoundError:
+            pass
+    
+    return jsonify({"message": "書籍刪除成功！"}), 200

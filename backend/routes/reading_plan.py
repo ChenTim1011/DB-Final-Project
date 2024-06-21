@@ -29,3 +29,12 @@ def add_plan():
         conn.commit()
         conn.close()
         return jsonify({"message": "閱讀計劃新增成功！"}), 201
+
+@plan_bp.route('/delete_plan/<int:plan_id>', methods=['DELETE'])
+def delete_plan(plan_id):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM ReadingPlan WHERE id = ?", (plan_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "閱讀計劃刪除成功！"}), 200

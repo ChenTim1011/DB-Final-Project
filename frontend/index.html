@@ -108,10 +108,7 @@
                 <a class="nav-link" data-toggle="tab" href="#addHistory">新增閱讀歷史</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#addPlan">新增閱讀計劃(& 更新閱讀進度)</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#deleteData">刪除資料</a>
+                <a class="nav-link" data-toggle="tab" href="#addPlan">新增閱讀計劃(或更新進度)</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#searchByCategory">按分類搜尋</a>
@@ -189,23 +186,6 @@
                     <button type="button" class="btn btn-primary" onclick="addPlan()">新增計劃</button>
                 </form>
             </div>
-            <div class="tab-pane container fade" id="deleteData">
-                <form id="deleteDataForm" class="mt-4">
-                    <div class="form-group">
-                        <label for="delete_table">選擇資料表:</label>
-                        <select class="form-control" id="delete_table">
-                            <option value="書籍">書籍</option>
-                            <option value="閱讀歷史">閱讀歷史</option>
-                            <option value="閱讀計劃">閱讀計劃</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="delete_id">要刪除的ID:</label>
-                        <input type="number" class="form-control" id="delete_id">
-                    </div>
-                    <button type="button" class="btn btn-danger" onclick="deleteData()">刪除資料</button>
-                </form>
-            </div>
             <div class="tab-pane container fade" id="searchByCategory">
                 <form id="searchByCategoryForm" class="mt-4">
                     <div class="form-group">
@@ -273,6 +253,7 @@
                                 <th>book_id</th>
                                 <th>bookpage</th>
                                 <th>note</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody id="history_table_body">
@@ -288,6 +269,7 @@
                                 <th>book_id</th>
                                 <th>expired_date</th>
                                 <th>is_complete</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody id="plan_table_body">
@@ -364,6 +346,9 @@
                         <button class="btn btn-success" onclick="viewPDF(${book.id})">
                             <i class="fas fa-file-pdf"></i> 閱讀PDF
                         </button>
+                        <button class="btn btn-danger" onclick="deleteBook(${book.id})">
+                            <i class="fas fa-trash"></i> 刪除
+                        </button>
                     </td>
                 `;
                 booksTableBody.appendChild(row);
@@ -384,6 +369,11 @@
                     <td>${history.book_id}</td>
                     <td>${history.bookpage}</td>
                     <td>${history.note}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteHistory(${history.id})">
+                            <i class="fas fa-trash"></i> 刪除
+                        </button>
+                    </td>
                 `;
                 historyTableBody.appendChild(row);
             });
@@ -402,6 +392,11 @@
                     <td>${plan.book_id}</td>
                     <td>${plan.expired_date}</td>
                     <td>${plan.is_complete ? '是' : '否'}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deletePlan(${plan.id})">
+                            <i class="fas fa-trash"></i> 刪除
+                        </button>
+                    </td>
                 `;
                 planTableBody.appendChild(row);
             });
@@ -677,6 +672,42 @@
         function openNotes(book_id, book_title) {
             const notesPageUrl = `/notes/${book_id}`;
             window.location.href = notesPageUrl;
+        }
+
+        // Delete a book
+        async function deleteBook(book_id) {
+            if (confirm('確定要刪除此書籍嗎？')) {
+                const response = await fetch(`/delete_book/${book_id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                alert(result.message);
+                fetchData();
+            }
+        }
+
+        // Delete a reading history record
+        async function deleteHistory(record_no) {
+            if (confirm('確定要刪除此歷史記錄嗎？')) {
+                const response = await fetch(`/delete_history/${record_no}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                alert(result.message);
+                fetchHistoryData();
+            }
+        }
+
+        // Delete a reading plan
+        async function deletePlan(plan_no) {
+            if (confirm('確定要刪除此閱讀計劃嗎？')) {
+                const response = await fetch(`/delete_plan/${plan_no}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                alert(result.message);
+                fetchPlanData();
+            }
         }
 
         // Fetch initial data
