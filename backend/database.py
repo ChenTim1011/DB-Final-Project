@@ -15,7 +15,7 @@ def create_tables():
             category TEXT NOT NULL,
             edition INTEGER NOT NULL,
             current_page INTEGER NOT NULL,
-            pdf_path TEXT  -- 新增欄位來儲存PDF檔案的路徑
+            pdf_path TEXT  -- Column to store PDF file path
         )
     ''')
     cursor.execute('''
@@ -56,6 +56,7 @@ def create_tables():
             FOREIGN KEY(book_id) REFERENCES Book(id)
         )
     ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_category ON Book (category)')
     conn.commit()
     conn.close()
 
@@ -95,6 +96,6 @@ def update_database_schema():
     columns = [column[1] for column in cursor.fetchall()]
     if 'pdf_path' not in columns:
         cursor.execute("ALTER TABLE Book ADD COLUMN pdf_path TEXT")
-    
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_category ON Book (category)')
     conn.commit()
     conn.close()
