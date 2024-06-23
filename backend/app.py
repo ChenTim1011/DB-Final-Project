@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
 from flask_cors import CORS
-from database import create_tables, update_database_schema
+from database import create_tables
 from routes import register_routes
 
 app = Flask(__name__, template_folder='../frontend')
@@ -26,5 +26,4 @@ def index():
 
 if __name__ == '__main__':
     create_tables()
-    update_database_schema()
     app.run(debug=True)

@@ -69,20 +69,15 @@ def create_tables():
         )
     ''')
 
-
+    # Adding indexes to improve performance
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_book_isbn ON Book (ISBN)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_book_author_id ON Author (author_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_note_book_id ON Note (book_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_reading_history_book_id ON ReadingHistory (book_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_reading_plan_book_id ON ReadingPlan (book_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_favorite_list_book_id ON FavoriteList (book_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_category ON Book (category)')
     conn.commit()
     conn.close()
 
-def update_database_schema():
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    cursor.execute("PRAGMA foreign_keys = ON") 
-    # Add pdf_path column if it doesn't exist
-    cursor.execute("PRAGMA table_info(Book)")
-    columns = [column[1] for column in cursor.fetchall()]
-    if 'pdf_path' not in columns:
-        cursor.execute("ALTER TABLE Book ADD COLUMN pdf_path TEXT")
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_category ON Book (category)')
-    conn.commit()
-    conn.close()
+
