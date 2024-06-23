@@ -12,7 +12,7 @@ def create_tables():
             author_name TEXT NOT NULL,
             introduction TEXT,
             nationality TEXT,
-            Birth_year INTEGER     
+            Birth_year INTEGER CHECK(Birth_year > 0)     
         )
     ''')
 
@@ -22,10 +22,10 @@ def create_tables():
             ISBN INTEGER NOT NULL,
             book_title TEXT NOT NULL,
             author TEXT NOT NULL,
-            price INTEGER NOT NULL,
+            price INTEGER NOT NULL CHECK(price >= 0),
             category TEXT NOT NULL,
-            edition INTEGER NOT NULL,
-            current_page INTEGER NOT NULL,
+            edition INTEGER NOT NULL CHECK(edition > 0),
+            current_page INTEGER NOT NULL CHECK(current_page >= 0),
             pdf_path TEXT,
             FOREIGN KEY(author) REFERENCES Author(author_name) ON DELETE CASCADE
         )
@@ -35,7 +35,7 @@ def create_tables():
             id INTEGER PRIMARY KEY,
             time_stamp TEXT NOT NULL,
             book_id INTEGER NOT NULL,
-            bookpage INTEGER NOT NULL,
+            bookpage INTEGER NOT NULL CHECK(bookpage >= 0),
             note TEXT NOT NULL,
             FOREIGN KEY(book_id) REFERENCES Book(id)
         )
@@ -45,8 +45,8 @@ def create_tables():
             id INTEGER PRIMARY KEY,
             book_id INTEGER NOT NULL,
             expired_date TEXT NOT NULL,
-            is_complete INTEGER NOT NULL,
-            FOREIGN KEY(book_id) REFERENCES Book(id)
+            is_complete INTEGER NOT NULL CHECK(is_complete IN (0, 1)),
+            FOREIGN KEY(book_id) REFERENCES Book(id) ON DELETE CASCADE
         )
     ''')
     cursor.execute('''
@@ -65,7 +65,7 @@ def create_tables():
             id INTEGER PRIMARY KEY,
             book_id INTEGER NOT NULL,
             book_title TEXT NOT NULL,
-            FOREIGN KEY(book_id) REFERENCES Book(id)
+            FOREIGN KEY(book_id) REFERENCES Book(id) ON DELETE CASCADE
         )
     ''')
 
