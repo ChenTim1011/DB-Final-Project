@@ -5,6 +5,17 @@ def create_tables():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Author (
+            author_id INTEGER PRIMARY KEY,
+            author_name TEXT NOT NULL,
+            introduction TEXT,
+            nationality TEXT,
+            Birth_year INTEGER     
+        )
+    ''')
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Book (
             id INTEGER PRIMARY KEY,
@@ -15,7 +26,8 @@ def create_tables():
             category TEXT NOT NULL,
             edition INTEGER NOT NULL,
             current_page INTEGER NOT NULL,
-            pdf_path TEXT  -- Column to store PDF file path
+            pdf_path TEXT,
+            FOREIGN KEY(author) REFERENCES Author(author_name) ON DELETE CASCADE
         )
     ''')
     cursor.execute('''
@@ -56,6 +68,8 @@ def create_tables():
             FOREIGN KEY(book_id) REFERENCES Book(id)
         )
     ''')
+
+
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_category ON Book (category)')
     conn.commit()
     conn.close()
@@ -63,34 +77,7 @@ def create_tables():
 def update_database_schema():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute("PRAGMA foreign_keys = ON")
-    
-    # Update column types for ISBN and edition
-    cursor.execute("PRAGMA table_info(Book)")
-    columns = {column[1]: column[2] for column in cursor.fetchall()}
-    
-    if 'ISBN' in columns and columns['ISBN'] != 'INTEGER':
-        cursor.execute("ALTER TABLE Book RENAME TO Book_old")
-        cursor.execute('''
-            CREATE TABLE Book (
-                id INTEGER PRIMARY KEY,
-                ISBN INTEGER NOT NULL,
-                book_title TEXT NOT NULL,
-                author TEXT NOT NULL,
-                price INTEGER NOT NULL,
-                category TEXT NOT NULL,
-                edition INTEGER NOT NULL,
-                current_page INTEGER NOT NULL,
-                pdf_path TEXT
-            )
-        ''')
-        cursor.execute('''
-            INSERT INTO Book (id, ISBN, book_title, author, price, category, edition, current_page, pdf_path)
-            SELECT id, CAST(ISBN AS INTEGER), book_title, author, price, category, CAST(edition AS INTEGER), current_page, pdf_path
-            FROM Book_old
-        ''')
-        cursor.execute("DROP TABLE Book_old")
-    
+    cursor.execute("PRAGMA foreign_keys = ON") 
     # Add pdf_path column if it doesn't exist
     cursor.execute("PRAGMA table_info(Book)")
     columns = [column[1] for column in cursor.fetchall()]

@@ -232,6 +232,7 @@
                                 <th>book_id</th>
                                 <th>ISBN</th>
                                 <th>書名</th>
+                                <th>作者</th>
                                 <th>價格</th>
                                 <th>分類</th>
                                 <th>版次</th>
@@ -314,12 +315,48 @@
         </div>
     </div>
 
+    <!-- Author Info Modal -->
+    <div class="modal" id="authorInfoModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">作者資訊(請先新建再更新)</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="authorForm">
+                        <input type="hidden" id="author_id">
+                        <div class="form-group">
+                            <label for="author_name">作者姓名:</label>
+                            <input type="text" class="form-control" id="author_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="introduction">介紹:</label>
+                            <textarea class="form-control" id="introduction"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="nationality">國籍:</label>
+                            <input type="text" class="form-control" id="nationality">
+                        </div>
+                        <div class="form-group">
+                            <label for="Birth_year">出生年:</label>
+                            <input type="number" class="form-control" id="Birth_year">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addAuthor()">新增</button>
+                        <button type="button" class="btn btn-primary" onclick="updateAuthor()">更新</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Fetch all books data
         async function fetchData() {
             const response = await fetch('/view_data/books');
+        try {
             const data = await response.json();
             const booksTableBody = document.getElementById('books_table_body');
             booksTableBody.innerHTML = '';
@@ -329,6 +366,7 @@
                     <td>${book.id}</td>
                     <td>${book.ISBN}</td>
                     <td>${book.book_title}</td>
+                    <td>${book.author}</td>
                     <td>${book.price}</td>
                     <td>${book.category}</td>
                     <td>${book.edition}</td>
@@ -349,10 +387,16 @@
                         <button class="btn btn-danger" onclick="deleteBook(${book.id})">
                             <i class="fas fa-trash"></i> 刪除
                         </button>
+                        <button class="btn btn-warning" onclick="showAuthorInfo('${book.author}')">
+                            <i class="fas fa-user"></i> 作者資訊
+                        </button>
                     </td>
                 `;
                 booksTableBody.appendChild(row);
             });
+        }catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
 
         // Fetch all reading history data
@@ -710,11 +754,63 @@
             }
         }
 
-        // Fetch initial data
-        fetchData();
-        fetchHistoryData();
-        fetchPlanData();
-        fetchFavoritesData();
+        async function addAuthor() {
+            const data = {
+                author_name: document.getElementById('author_name').value,
+                introduction: document.getElementById('introduction').value,
+                nationality: document.getElementById('nationality').value,
+                Birth_year: document.getElementById('Birth_year').value
+            };
+
+            const response = await fetch('/add_author', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+            $('#addAuthorModal').modal('hide');
+            fetchData();
+        }
+
+
+        // Show author information
+        async function showAuthorInfo(author) {
+            const response = await fetch(`/get_author/${author}`);
+            const data = await response.json();
+            if (data) {
+                document.getElementById('author_id').value = data.author_id;
+                document.getElementById('author_name').value = data.author_name;
+                document.getElementById('introduction').value = data.introduction;
+                document.getElementById('nationality').value = data.nationality;
+                document.getElementById('Birth_year').value = data.Birth_year;
+                $('#authorInfoModal').modal('show');
+            } else {
+                alert("無法加載作者資訊");
+            }
+    }
+
+        async function updateAuthor() {
+            const authorData = {
+                author_id: document.getElementById('author_id').value,
+                author_name: document.getElementById('author_name').value,
+                introduction: document.getElementById('introduction').value,
+                nationality: document.getElementById('nationality').value,
+                Birth_year: document.getElementById('Birth_year').value
+            };
+            const response = await fetch('/update_author', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(authorData)
+            });
+            const result = await response.json();
+            alert(result.message);
+            $('#authorInfoModal').modal('hide');
+        }
 
         // Fetch categories
         async function fetchCategories() {
@@ -729,6 +825,12 @@
                 categoryDropdown.appendChild(option);
             });
         }
+
+        // Fetch initial data
+        fetchData();
+        fetchHistoryData();
+        fetchPlanData();
+        fetchFavoritesData();
         fetchCategories();
     </script>
 </body>
