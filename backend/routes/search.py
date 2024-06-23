@@ -23,24 +23,28 @@ def search_by_category():
         "current_page": book[7]
     } for book in books])
 
-@search_bp.route('/search_by_name', methods=['GET'])
-def search_by_name():
-    name = request.args.get('name')
+@search_bp.route('/search_book/<int:book_id>', methods=['GET'])
+def search_book(book_id):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Book WHERE book_title LIKE ?", ('%' + name + '%',))
-    books = cursor.fetchall()
+    cursor.execute("SELECT * FROM Book WHERE id = ?", (book_id,))
+    book = cursor.fetchone()
     conn.close()
-    return jsonify([{
-        "id": book[0],
-        "ISBN": book[1],
-        "book_title": book[2],
-        "author": book[3],
-        "price": book[4],
-        "category": book[5],
-        "edition": book[6],
-        "current_page": book[7]
-    } for book in books])
+    if book:
+        result = {
+            "id": book[0],
+            "ISBN": book[1],
+            "book_title": book[2],
+            "author": book[3],
+            "price": book[4],
+            "category": book[5],
+            "edition": book[6],
+            "current_page": book[7]
+        }
+        return jsonify(result)
+    else:
+        return jsonify({"message": "書籍未找到！"}), 404
+
 
 @search_bp.route('/view_data/<table>', methods=['GET'])
 def view_data(table):

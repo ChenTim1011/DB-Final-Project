@@ -10,11 +10,13 @@ def add_history():
     data = request.get_json()
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
+    timestamp = datetime.now().strftime('%Y-%m-%d') 
     cursor.execute("INSERT INTO ReadingHistory (time_stamp, book_id, bookpage, note) VALUES (?, ?, ?, ?)",
-                   (datetime.utcnow().isoformat(), data['book_id'], data['bookpage'], data['note']))
+                   (timestamp, data['book_id'], data['bookpage'], data['note']))
     conn.commit()
     conn.close()
     return jsonify({"message": "閱讀歷史新增成功！"}), 201
+
 
 @history_bp.route('/delete_history/<int:history_id>', methods=['DELETE'])
 def delete_history(history_id):
