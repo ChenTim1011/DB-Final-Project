@@ -13,6 +13,7 @@ The database contains the following tables:
 - **`id`**: Integer, Primary Key
 - **`ISBN`**: Integer
 - **`book_title`**: Text, Not Null
+- **`author_id`**: Number
 - **`author`**: Text
 - **`price`**: Integer, Check (price >= 0)
 - **`category`**: Text
