@@ -116,13 +116,14 @@ def delete_book(book_id):
     Delete a book from the database.
     """
     conn = sqlite3.connect(DATABASE)
+    conn.execute("PRAGMA foreign_keys = ON")
     cursor = conn.cursor()
     
     # 查找書籍的PDF文件路徑
     cursor.execute("SELECT pdf_path FROM Book WHERE id = ?", (book_id,))
     pdf_path = cursor.fetchone()
     
-    # 刪除書籍的記錄
+    # 刪除書籍的記錄及其相關資料（閱讀歷史、閱讀計劃、筆記、我的最愛）
     cursor.execute("DELETE FROM Book WHERE id = ?", (book_id,))
     conn.commit()
     conn.close()
