@@ -45,6 +45,28 @@ def search_book(book_id):
     else:
         return jsonify({"message": "書籍未找到！"}), 404
 
+@search_bp.route('/search_id_by_book_title/<string:book_title>', methods=['GET'])
+def search_id_by_book_title(book_title):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Book WHERE book_title = ?", (book_title,))
+    book = cursor.fetchone()
+    conn.close()
+    if book:
+        result = {
+            "id": book[0],
+            "ISBN": book[1],
+            "book_title": book[2],
+            "author": book[3],
+            "price": book[4],
+            "category": book[5],
+            "edition": book[6],
+            "current_page": book[7]
+        }
+        return jsonify(result)
+    else:
+        return jsonify({"message": "書籍未找到！"}), 404
+
 
 @search_bp.route('/view_data/<table>', methods=['GET'])
 def view_data(table):
