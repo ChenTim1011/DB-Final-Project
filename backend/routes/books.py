@@ -5,6 +5,12 @@ import os
 
 books_bp = Blueprint('books', __name__)
 
+def get_book_ids():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM Book")
+    return [id[0] for id in cursor.fetchall()]
+
 @books_bp.route('/check_book', methods=['POST'])
 def check_book():
     """
@@ -48,6 +54,7 @@ def add_book():
                    (data['ISBN'], new_book_title, data['author'], data['price'], data['category'], data['edition'], data['current_page']))
     conn.commit()
     conn.close()
+    print(f'資料庫有{len(get_book_ids())}本書')
     return jsonify({"message": f"書籍 {new_book_title} 新增成功！"}), 201
 
 @books_bp.route('/update_page', methods=['PUT'])
