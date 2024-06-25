@@ -1,0 +1,4 @@
+venv/
+uploads/*
+library.db
+__pycache__
