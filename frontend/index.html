@@ -308,7 +308,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">作者資訊(請先新建再更新)</h4>
+                    <h4 class="modal-title">作者資訊(如果是第一次請先新建再更新)</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -798,6 +798,7 @@
             const result = await response.json();
             alert(result.message);
             $('#authorInfoModal').modal('hide');
+            location.reload();
         }
 
         // Fetch categories
